@@ -1,0 +1,86 @@
+:root {
+  --background-color: #ffffff;
+  --text-color: #000000;
+  --border-color: #cccccc;
+  --highlight-color: #333333;
+}
+
+body[data-theme='dark'] {
+  --background-color: #1a1a1a;
+  --text-color: #ffffff;
+  --border-color: #444444;
+  --highlight-color: #bbbbbb;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: Arial, sans-serif;
+  margin: 40px;
+}
+
+h1, h2 {
+  color: var(--highlight-color);
+}
+
+.endpoint {
+  margin-bottom: 20px;
+}
+
+.method {
+  font-weight: bold;
+}
+
+.url {
+  font-style: italic;
+}
+
+.params, .response {
+  margin-left: 20px;
+}
+
+code {
+  background-color: var(--border-color);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+pre {
+  background-color: var(--border-color);
+  padding: 10px;
+  border-radius: 3px;
+}
+
+.dropzone {
+  border: 2px dashed var(--border-color);
+  padding: 20px;
+  text-align: center;
+  color: var(--text-color);
+  margin-top: 10px;
+}
+
+.preview {
+  margin-top: 20px;
+}
+
+.preview img, .preview video {
+  max-width: 100%;
+  max-height: 300px;
+  margin-top: 10px;
+}
+
+button {
+  background-color: lightgrey;
+  color: var(--highlight-color);
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 15px;
+  align-items: center;
+}
+
+button:hover {
+  background-color: var(--border-color);
+  color: var(--highlight-color);
+}
