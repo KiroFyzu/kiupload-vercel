@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 :root {
   --background-color: #ffffff;
   --text-color: #000000;
@@ -83,4 +84,13 @@ button {
 button:hover {
   background-color: var(--border-color);
   color: var(--highlight-color);
+=======
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+>>>>>>> c8ff498bdba0fab51f1d25d825ca076c4031b93a
 }
