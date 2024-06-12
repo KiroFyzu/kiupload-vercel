@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Layanan Upload File
 
 Proyek ini adalah layanan upload file sederhana menggunakan Node.js dan Express. Layanan ini memungkinkan pengguna untuk mengupload file melalui form atau URL. File yang diupload disimpan sementara dan akan dihapus secara otomatis setelah 12 jam.
