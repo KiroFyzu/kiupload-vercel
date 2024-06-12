@@ -10,7 +10,7 @@
     "cookie-parser": "~1.4.4",
     "dayjs": "^1.11.11",
     "debug": "~2.6.9",
-    "ejs": "~2.6.1",
+    "ejs": "~3.1.10",
     "express": "~4.16.1",
     "fs-extra": "^11.2.0",
     "http-errors": "~1.6.3",
