@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dokumentasi Layanan Upload File</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    h1 {
+      color: #333;
+    }
+    h2 {
+      color: #666;
+    }
+    .endpoint {
+      margin-bottom: 20px;
+    }
+    .method {
+      font-weight: bold;
+    }
+    .url {
+      font-style: italic;
+    }
+    .params, .response {
+      margin-left: 20px;
+    }
+    code {
+      background-color: #f4f4f4;
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+    pre {
+      background-color: #f4f4f4;
+      padding: 10px;
+      border-radius: 3px;
+    }
+  </style>
+  <script>
+    function toggleUploadOption() {
+      const uploadFromFile = document.getElementById('uploadFromFile');
+      const uploadFromUrl = document.getElementById('uploadFromUrl');
+      const fileOption = document.getElementById('fileOption');
+      const urlOption = document.getElementById('urlOption');
+      
+      if (fileOption.checked) {
+        uploadFromFile.style.display = 'block';
+        uploadFromUrl.style.display = 'none';
+      } else if (urlOption.checked) {
+        uploadFromFile.style.display = 'none';
+        uploadFromUrl.style.display = 'block';
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Upload File</h1>
+  <input type="radio" id="fileOption" name="uploadOption" value="file" checked onclick="toggleUploadOption()">
+  <label for="fileOption">Upload dari File</label>
+  <input type="radio" id="urlOption" name="uploadOption" value="url" onclick="toggleUploadOption()">
+  <label for="urlOption">Upload dari URL</label>
+
+  <form id="uploadFromFile" action="/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" required>
+    <button type="submit">Upload</button>
+  </form>
+
+  <form id="uploadFromUrl" action="/upload-url" method="get" style="display: none;">
+    <input type="url" name="url" placeholder="Masukkan URL .jpg atau .mp4" required>
+    <button type="submit">Upload</button>
+  </form>
+  <br>
+  <h1>Dokumentasi API</h1>
+
+  <div class="endpoint">
+    <h2>Upload File via Form</h2>
+    <p class="method">POST</p>
+    <p class="url">/upload</p>
+
+    <h3>Deskripsi</h3>
+    <p>Endpoint ini digunakan untuk mengupload file melalui form data.</p>
+
+    <h3>Permintaan</h3>
+    <div class="params">
+      <p><strong>Headers:</strong></p>
+      <ul>
+        <li>Content-Type: multipart/form-data</li>
+      </ul>
+      <p><strong>Body:</strong></p>
+      <ul>
+        <li>file: File yang akan diupload (wajib).</li>
+      </ul>
+    </div>
+
+    <h3>Respon</h3>
+    <div class="response">
+      <pre>
+{
+  "author": 'https://github.com/KiroFyzu/',
+  "message": "File berhasil diupload",
+  "fileUrl": "<%= protocol %>://<%= host %>/uploads/yourfile.ext"
+}
+      </pre>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <h2>Upload File via URL</h2>
+    <p class="method">GET</p>
+    <p class="url">/upload-url</p>
+
+    <h3>Deskripsi</h3>
+    <p>Endpoint ini digunakan untuk mengupload file dari URL yang diberikan.</p>
+
+    <h3>Permintaan</h3>
+    <div class="params">
+      <p><strong>Query Parameters:</strong></p>
+      <ul>
+        <li>url: URL dari file yang akan diupload (wajib).</li>
+      </ul>
+    </div>
+
+    <h3>Respon</h3>
+    <div class="response">
+      <pre>
+{
+  "author": 'https://github.com/KiroFyzu/',
+  "message": "File berhasil diupload",
+  "fileUrl": "<%= protocol %>://<%= host %>/uploads/yourfile.ext"
+}
+      </pre>
+    </div>
+  </div>
+</body>
+</html>
