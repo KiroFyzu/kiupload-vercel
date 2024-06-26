@@ -3,17 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
-  <link rel="stylesheet" href="/stylesheets/style.css">
-  <title>Layanan Upload File</title>
-
-</head>
-<body>
-  <h1>Upload File</h1>
-  <input type="checkbox" id="themeToggle">
-  <label for="themeToggle">Night Mode</label>
-  <br><br>
-=======
   <title>Dokumentasi Layanan Upload File</title>
   <style>
     body {
@@ -68,24 +57,14 @@
 </head>
 <body>
   <h1>Upload File</h1>
->>>>>>> c8ff498bdba0fab51f1d25d825ca076c4031b93a
   <input type="radio" id="fileOption" name="uploadOption" value="file" checked onclick="toggleUploadOption()">
   <label for="fileOption">Upload dari File</label>
   <input type="radio" id="urlOption" name="uploadOption" value="url" onclick="toggleUploadOption()">
   <label for="urlOption">Upload dari URL</label>
 
   <form id="uploadFromFile" action="/upload" method="post" enctype="multipart/form-data">
-<<<<<<< HEAD
-    <input type="file" id="fileInput" name="file" required>
-    <div id="dropzone" class="dropzone">
-      Seret & lepaskan file di sini atau tekan Ctrl+V untuk menempelkan file
-    </div>
-    <button type="submit">Upload</button>
-    <div id="preview" class="preview"></div>
-=======
     <input type="file" name="file" required>
     <button type="submit">Upload</button>
->>>>>>> c8ff498bdba0fab51f1d25d825ca076c4031b93a
   </form>
 
   <form id="uploadFromUrl" action="/upload-url" method="get" style="display: none;">
@@ -119,11 +98,7 @@
     <div class="response">
       <pre>
 {
-<<<<<<< HEAD
-  "credit": "https://github.com/KiroFyzu/",
-=======
-  "author": 'https://github.com/KiroFyzu/',
->>>>>>> c8ff498bdba0fab51f1d25d825ca076c4031b93a
+      "author": 'https://github.com/KiroFyzu/',
   "message": "File berhasil diupload",
   "fileUrl": "<%= protocol %>://<%= host %>/uploads/yourfile.ext"
 }
@@ -151,20 +126,12 @@
     <div class="response">
       <pre>
 {
-<<<<<<< HEAD
-  "credit": "https://github.com/KiroFyzu/",
-=======
-  "author": 'https://github.com/KiroFyzu/',
->>>>>>> c8ff498bdba0fab51f1d25d825ca076c4031b93a
+      "author": 'https://github.com/KiroFyzu/',
   "message": "File berhasil diupload",
   "fileUrl": "<%= protocol %>://<%= host %>/uploads/yourfile.ext"
 }
       </pre>
     </div>
   </div>
-<<<<<<< HEAD
-  <script src="/script.js"></script>
-=======
->>>>>>> c8ff498bdba0fab51f1d25d825ca076c4031b93a
 </body>
 </html>
