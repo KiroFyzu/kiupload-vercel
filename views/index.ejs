@@ -3,71 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <link rel="stylesheet" href="/stylesheets/style.css">
   <title>Layanan Upload File</title>
+
 </head>
 <body>
   <h1>Upload File</h1>
   <input type="checkbox" id="themeToggle">
   <label for="themeToggle">Night Mode</label>
   <br><br>
-
-  <title>Dokumentasi Layanan Upload File</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-    }
-    h1 {
-      color: #333;
-    }
-    h2 {
-      color: #666;
-    }
-    .endpoint {
-      margin-bottom: 20px;
-    }
-    .method {
-      font-weight: bold;
-    }
-    .url {
-      font-style: italic;
-    }
-    .params, .response {
-      margin-left: 20px;
-    }
-    code {
-      background-color: #f4f4f4;
-      padding: 2px 4px;
-      border-radius: 3px;
-    }
-    pre {
-      background-color: #f4f4f4;
-      padding: 10px;
-      border-radius: 3px;
-    }
-  </style>
-  <script>
-    function toggleUploadOption() {
-      const uploadFromFile = document.getElementById('uploadFromFile');
-      const uploadFromUrl = document.getElementById('uploadFromUrl');
-      const fileOption = document.getElementById('fileOption');
-      const urlOption = document.getElementById('urlOption');
-      
-      if (fileOption.checked) {
-        uploadFromFile.style.display = 'block';
-        uploadFromUrl.style.display = 'none';
-      } else if (urlOption.checked) {
-        uploadFromFile.style.display = 'none';
-        uploadFromUrl.style.display = 'block';
-      }
-    }
-  </script>
-</head>
-<body>
-  <h1>Upload File</h1>
-
   <input type="radio" id="fileOption" name="uploadOption" value="file" checked onclick="toggleUploadOption()">
   <label for="fileOption">Upload dari File</label>
   <input type="radio" id="urlOption" name="uploadOption" value="url" onclick="toggleUploadOption()">
@@ -80,10 +24,6 @@
     </div>
     <button type="submit">Upload</button>
     <div id="preview" class="preview"></div>
-
-    <input type="file" name="file" required>
-    <button type="submit">Upload</button>
-
   </form>
 
   <form id="uploadFromUrl" action="/upload-url" method="get" style="display: none;">
@@ -118,9 +58,6 @@
       <pre>
 {
   "credit": "https://github.com/KiroFyzu/",
-
-  "author": 'https://github.com/KiroFyzu/',
-
   "message": "File berhasil diupload",
   "fileUrl": "<%= protocol %>://<%= host %>/uploads/yourfile.ext"
 }
@@ -149,16 +86,12 @@
       <pre>
 {
   "credit": "https://github.com/KiroFyzu/",
-
-  "author": 'https://github.com/KiroFyzu/',
-
   "message": "File berhasil diupload",
   "fileUrl": "<%= protocol %>://<%= host %>/uploads/yourfile.ext"
 }
       </pre>
     </div>
   </div>
-
   <script src="/script.js"></script>
 </body>
 </html>
