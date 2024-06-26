@@ -20,6 +20,7 @@ var uploadDir = path.join(__dirname, '../../tmp/');
 // Untuk hosting di localhost/dedicated server (VPS) 
 // var uploadDir = path.join(__dirname, './tmp/');
 
+
 fs.ensureDirSync(uploadDir);
 
 //menyimpan file dengan nama unik
