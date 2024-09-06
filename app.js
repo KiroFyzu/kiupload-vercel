@@ -134,6 +134,25 @@ var deleteOldFiles = () => {
   });
 };
 
+// Endpoint untuk menampilkan daftar file yang diupload
+app.get('/uploads-list', (req, res) => {
+  fs.readdir(uploadDir, (err, files) => {
+    if (err) {
+      console.error('Gagal membaca direktori', err);
+      return res.status(500).json({ error: 'Gagal membaca direktori' });
+    }
+
+    var fileData = files.map(file => {
+      return {
+        name: file,
+        url: `${req.protocol}://${req.get('host')}/uploads/${file}`
+      };
+    });
+
+    res.render('history', { files: fileData });
+  });
+});
+
 // penghapusan file setiap jam
 schedule.scheduleJob('0 * * * *', deleteOldFiles);
 

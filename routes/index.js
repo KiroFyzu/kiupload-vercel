@@ -10,5 +10,13 @@ router.get('/', function(req, res, next) {
   });
 });
 
+router.get('/', (req, res) => {
+  res.render('history', { 
+    title: 'History Upload',
+    protocol: req.protocol,
+    host: req.get('host')
+  });
+});
+
 
 module.exports = router;
