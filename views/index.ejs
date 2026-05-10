@@ -3,95 +3,867 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/stylesheets/style.css">
-  <title>Layanan Upload File</title>
+  <title>Layanan Upload File | Fyas.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-orange: #ff6b35;
+      --primary-light: #ff9e5e;
+      --primary-dark: #e85d04;
+      --accent-orange: #ff8500;
+      --bg-dark: #0f0f0f;
+      --bg-light: #f5f0eb;
+      --glass-bg-dark: rgba(20, 20, 20, 0.6);
+      --glass-bg-light: rgba(255, 255, 255, 0.25);
+      --glass-border-dark: rgba(255, 107, 53, 0.2);
+      --glass-border-light: rgba(255, 107, 53, 0.15);
+      --text-dark: #f0f0f0;
+      --text-light: #1a1a1a;
+      --text-muted-dark: rgba(255, 255, 255, 0.6);
+      --text-muted-light: rgba(0, 0, 0, 0.5);
+      --shadow-orange: 0 8px 32px rgba(255, 107, 53, 0.2);
+      --shadow-dark: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --radius: 20px;
+      --radius-sm: 12px;
+    }
 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.5s ease, color 0.3s ease;
+      position: relative;
+    }
+
+    /* Background Animation */
+    .bg-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.6;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .orb-1 {
+      width: 400px;
+      height: 400px;
+      background: linear-gradient(135deg, #ff6b35, #ff9e5e);
+      top: -10%;
+      left: -10%;
+      animation-delay: 0s;
+    }
+
+    .orb-2 {
+      width: 300px;
+      height: 300px;
+      background: linear-gradient(135deg, #ff8500, #ffb347);
+      top: 40%;
+      right: -5%;
+      animation-delay: -5s;
+    }
+
+    .orb-3 {
+      width: 250px;
+      height: 250px;
+      background: linear-gradient(135deg, #e85d04, #ff6b35);
+      bottom: -5%;
+      left: 30%;
+      animation-delay: -10s;
+    }
+
+    .orb-4 {
+      width: 180px;
+      height: 180px;
+      background: linear-gradient(135deg, #ffb347, #ffcc80);
+      top: 20%;
+      left: 50%;
+      animation-delay: -15s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(30px, -30px) scale(1.1); }
+      50% { transform: translate(-20px, 20px) scale(0.95); }
+      75% { transform: translate(20px, 10px) scale(1.05); }
+    }
+
+    /* Dark Mode (Default) */
+    body.dark-mode {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    body.dark-mode .glass-panel {
+      background: var(--glass-bg-dark);
+      border: 1px solid var(--glass-border-dark);
+      box-shadow: var(--shadow-orange), var(--shadow-dark);
+    }
+
+    body.dark-mode .text-muted { color: var(--text-muted-dark); }
+    body.dark-mode .endpoint { background: rgba(255, 107, 53, 0.05); }
+    body.dark-mode pre {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 107, 53, 0.1);
+    }
+    body.dark-mode .tab-btn {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted-dark);
+    }
+    body.dark-mode .tab-btn.active {
+      background: linear-gradient(135deg, var(--primary-orange), var(--primary-dark));
+      color: white;
+    }
+    body.dark-mode .dropzone {
+      background: rgba(255, 107, 53, 0.05);
+      border: 2px dashed rgba(255, 107, 53, 0.3);
+    }
+    body.dark-mode .dropzone:hover, body.dark-mode .dropzone.dragover {
+      background: rgba(255, 107, 53, 0.1);
+      border-color: var(--primary-orange);
+    }
+    body.dark-mode .method { color: var(--primary-light); }
+    body.dark-mode input[type="text"], 
+    body.dark-mode input[type="url"], 
+    body.dark-mode input[type="file"] {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-dark);
+    }
+
+    /* Light Mode */
+    body.light-mode {
+      background: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    body.light-mode .glass-panel {
+      background: var(--glass-bg-light);
+      border: 1px solid var(--glass-border-light);
+      box-shadow: 0 8px 32px rgba(255, 107, 53, 0.15), 0 4px 16px rgba(0, 0, 0, 0.05);
+    }
+
+    body.light-mode .text-muted { color: var(--text-muted-light); }
+    body.light-mode .endpoint { background: rgba(255, 107, 53, 0.03); }
+    body.light-mode pre {
+      background: rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(255, 107, 53, 0.1);
+    }
+    body.light-mode .tab-btn {
+      background: rgba(0, 0, 0, 0.03);
+      color: var(--text-muted-light);
+    }
+    body.light-mode .tab-btn.active {
+      background: linear-gradient(135deg, var(--primary-orange), var(--primary-dark));
+      color: white;
+    }
+    body.light-mode .dropzone {
+      background: rgba(255, 107, 53, 0.03);
+      border: 2px dashed rgba(255, 107, 53, 0.2);
+    }
+    body.light-mode .dropzone:hover, body.light-mode .dropzone.dragover {
+      background: rgba(255, 107, 53, 0.08);
+      border-color: var(--primary-orange);
+    }
+    body.light-mode .method { color: var(--primary-dark); }
+    body.light-mode input[type="text"], 
+    body.light-mode input[type="url"], 
+    body.light-mode input[type="file"] {
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      color: var(--text-light);
+    }
+
+    /* Layout */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      animation: fadeInDown 0.8s ease;
+    }
+
+    .header h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, var(--primary-orange), var(--primary-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header p {
+      font-size: 1.1rem;
+      font-weight: 300;
+    }
+
+    /* Glass Panel */
+    .glass-panel {
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: var(--radius);
+      padding: 30px;
+      margin-bottom: 30px;
+      transition: all 0.3s ease;
+    }
+
+    .glass-panel:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 32px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 107, 53, 0.2);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+      border-radius: 32px;
+      transition: 0.4s;
+      backdrop-filter: blur(10px);
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 24px;
+      width: 24px;
+      left: 4px;
+      bottom: 3px;
+      background: linear-gradient(135deg, var(--primary-orange), var(--primary-light));
+      border-radius: 50%;
+      transition: 0.4s;
+      box-shadow: 0 2px 8px rgba(255, 107, 53, 0.4);
+    }
+
+    input:checked + .toggle-slider {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(28px);
+      background: linear-gradient(135deg, #f0f0f0, #ffffff);
+    }
+
+    .toggle-label {
+      position: absolute;
+      right: 70px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.85rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 14px 20px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .tab-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .tab-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Forms */
+    .form-container {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .form-container.active {
+      display: block;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    input[type="text"], 
+    input[type="url"], 
+    input[type="file"] {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: var(--radius-sm);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    input[type="text"]:focus, 
+    input[type="url"]:focus {
+      border-color: var(--primary-orange);
+      box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+    }
+
+    /* Dropzone */
+    .dropzone {
+      border-radius: var(--radius-sm);
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dropzone::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .dropzone:hover::before, .dropzone.dragover::before {
+      left: 100%;
+    }
+
+    .dropzone-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
+
+    .dropzone-text {
+      font-size: 0.95rem;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    .dropzone-hint {
+      font-size: 0.8rem;
+      opacity: 0.6;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      width: 100%;
+      padding: 14px 24px;
+      background: linear-gradient(135deg, var(--primary-orange), var(--primary-dark));
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-orange);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    /* Preview */
+    .preview {
+      margin-top: 20px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      display: none;
+    }
+
+    .preview.active {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .preview img, .preview video {
+      max-width: 100%;
+      border-radius: var(--radius-sm);
+      display: block;
+    }
+
+    /* API Docs */
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 25px;
+      text-align: center;
+      background: linear-gradient(135deg, var(--primary-orange), var(--primary-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .endpoint {
+      border-radius: var(--radius);
+      padding: 25px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 107, 53, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .endpoint:hover {
+      border-color: rgba(255, 107, 53, 0.3);
+      transform: translateX(5px);
+    }
+
+    .endpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .endpoint h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      flex: 1;
+    }
+
+    .method {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 6px;
+      background: rgba(255, 107, 53, 0.1);
+    }
+
+    .url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      padding: 6px 14px;
+      border-radius: 6px;
+      background: rgba(255, 107, 53, 0.05);
+      border: 1px solid rgba(255, 107, 53, 0.1);
+      word-break: break-all;
+    }
+
+    .endpoint h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      color: var(--primary-orange);
+    }
+
+    .endpoint p {
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .endpoint ul {
+      margin-left: 20px;
+      margin-bottom: 15px;
+    }
+
+    .endpoint li {
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    pre {
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(var(--primary-orange), var(--primary-dark));
+      border-radius: 4px;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .header h1 { font-size: 2rem; }
+      .glass-panel { padding: 20px; }
+      .tabs { flex-direction: column; }
+      .theme-toggle { top: 10px; right: 10px; }
+      .toggle-label { display: none; }
+    }
+
+    /* File input styling */
+    input[type="file"] {
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    input[type="file"]::file-selector-button {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(135deg, var(--primary-orange), var(--primary-dark));
+      color: white;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      margin-right: 12px;
+      transition: all 0.3s ease;
+    }
+
+    input[type="file"]::file-selector-button:hover {
+      transform: scale(1.05);
+    }
+  </style>
 </head>
-<body>
-  <h1>Upload File</h1>
-  <input type="checkbox" id="themeToggle">
-  <label for="themeToggle">Night Mode</label>
-  <br><br>
-  <input type="radio" id="fileOption" name="uploadOption" value="file" checked onclick="toggleUploadOption()">
-  <label for="fileOption">Upload dari File</label>
-  <input type="radio" id="urlOption" name="uploadOption" value="url" onclick="toggleUploadOption()">
-  <label for="urlOption">Upload dari URL</label>
+<body class="dark-mode">
+  <!-- Background Animation -->
+  <div class="bg-container">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+  </div>
 
-  <form id="uploadFromFile" action="/upload" method="post" enctype="multipart/form-data">
-    <input type="file" id="fileInput" name="file" required>
-    <div id="dropzone" class="dropzone">
-      Seret & lepaskan file di sini atau tekan Ctrl+V untuk menempelkan file
-    </div>
-    <button type="submit">Upload</button>
-    <div id="preview" class="preview"></div>
-  </form>
+  <!-- Theme Toggle -->
+  <div class="theme-toggle">
+    <span class="toggle-label text-muted">Night Mode</span>
+    <label class="toggle-switch">
+      <input type="checkbox" id="themeToggle" checked onchange="toggleTheme()">
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
 
-  <form id="uploadFromUrl" action="/upload-url" method="get" style="display: none;">
-    <input type="url" name="url" placeholder="Masukkan URL .jpg atau .mp4" required>
-    <button type="submit">Upload</button>
-  </form>
-  <br>
-  <h1>Dokumentasi API</h1>
-
-  <div class="endpoint">
-    <h2>Upload File via Form</h2>
-    <p class="method">POST</p>
-    <p class="url">/upload</p>
-
-    <h3>Deskripsi</h3>
-    <p>Endpoint ini digunakan untuk mengupload file melalui form data.</p>
-
-    <h3>Permintaan</h3>
-    <div class="params">
-      <p><strong>Headers:</strong></p>
-      <ul>
-        <li>Content-Type: multipart/form-data</li>
-      </ul>
-      <p><strong>Body:</strong></p>
-      <ul>
-        <li>file: File yang akan diupload (wajib).</li>
-      </ul>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>Upload File</h1>
+      <p class="text-muted">Layanan upload file modern dan Upload Status HD by Fyas.</p>
     </div>
 
-    <h3>Respon</h3>
-    <div class="response">
-      <pre>
+    <!-- Upload Section -->
+    <div class="glass-panel">
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" id="tabFile" onclick="switchTab('file')">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Upload dari File
+        </button>
+        <button class="tab-btn" id="tabUrl" onclick="switchTab('url')">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+          </svg>
+          Upload dari URL
+        </button>
+      </div>
+
+      <!-- File Upload Form -->
+      <form id="uploadFromFile" class="form-container active" action="/upload" method="post" enctype="multipart/form-data">
+        <div class="input-group">
+          <label>Pilih File</label>
+          <input type="file" id="fileInput" name="file" required onchange="handleFileSelect(this)">
+        </div>
+        
+        <div id="dropzone" class="dropzone" onclick="document.getElementById('fileInput').click()">
+          <div class="dropzone-icon">📁</div>
+          <div class="dropzone-text">Seret & lepaskan file di sini</div>
+          <div class="dropzone-hint">atau tekan Ctrl+V untuk menempelkan file</div>
+        </div>
+
+        <button type="submit" class="btn-primary">
+          <span>🚀 Upload File</span>
+        </button>
+
+        <div id="preview" class="preview"></div>
+      </form>
+
+      <!-- URL Upload Form -->
+      <form id="uploadFromUrl" class="form-container" action="/upload-url" method="get">
+        <div class="input-group">
+          <label>URL File</label>
+          <input type="url" name="url" placeholder="Masukkan URL .jpg atau .mp4" required>
+        </div>
+        
+        <button type="submit" class="btn-primary">
+          <span>🔗 Upload dari URL</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- API Documentation -->
+    <div class="header" style="margin-top: 50px;">
+      <h1 class="section-title">Dokumentasi API</h1>
+    </div>
+
+    <!-- Endpoint 1 -->
+    <div class="glass-panel endpoint">
+      <div class="endpoint-header">
+        <h2>Upload File via Form</h2>
+        <span class="method">POST</span>
+        <span class="url">/upload</span>
+      </div>
+
+      <h3>Deskripsi</h3>
+      <p class="text-muted">Endpoint ini digunakan untuk mengupload file melalui form data.</p>
+
+      <h3>Permintaan</h3>
+      <div class="params">
+        <p><strong>Headers:</strong></p>
+        <ul class="text-muted">
+          <li>Content-Type: multipart/form-data</li>
+        </ul>
+        <p><strong>Body:</strong></p>
+        <ul class="text-muted">
+          <li>file: File yang akan diupload (wajib).</li>
+        </ul>
+      </div>
+
+      <h3>Respon</h3>
+      <div class="response">
+        <pre>
 {
   "credit": "https://github.com/KiroFyzu/",
   "message": "File berhasil diupload",
   "fileUrl": "<%= protocol %>://<%= host %>/uploads/yourfile.ext"
-}
-      </pre>
-    </div>
-  </div>
-
-  <div class="endpoint">
-    <h2>Upload File via URL</h2>
-    <p class="method">GET</p>
-    <p class="url">/upload-url</p>
-
-    <h3>Deskripsi</h3>
-    <p>Endpoint ini digunakan untuk mengupload file dari URL yang diberikan.</p>
-
-    <h3>Permintaan</h3>
-    <div class="params">
-      <p><strong>Query Parameters:</strong></p>
-      <ul>
-        <li>url: URL dari file yang akan diupload (wajib).</li>
-      </ul>
+}</pre>
+      </div>
     </div>
 
-    <h3>Respon</h3>
-    <div class="response">
-      <pre>
+    <!-- Endpoint 2 -->
+    <div class="glass-panel endpoint">
+      <div class="endpoint-header">
+        <h2>Upload File via URL</h2>
+        <span class="method">GET</span>
+        <span class="url">/upload-url</span>
+      </div>
+
+      <h3>Deskripsi</h3>
+      <p class="text-muted">Endpoint ini digunakan untuk mengupload file dari URL yang diberikan.</p>
+
+      <h3>Permintaan</h3>
+      <div class="params">
+        <p><strong>Query Parameters:</strong></p>
+        <ul class="text-muted">
+          <li>url: URL dari file yang akan diupload (wajib).</li>
+        </ul>
+      </div>
+
+      <h3>Respon</h3>
+      <div class="response">
+        <pre>
 {
   "credit": "https://github.com/KiroFyzu/",
   "message": "File berhasil diupload",
   "fileUrl": "<%= protocol %>://<%= host %>/uploads/yourfile.ext"
-}
-      </pre>
+}</pre>
+      </div>
     </div>
   </div>
-  <script src="/script.js"></script>
+
+  <script>
+    // Theme Toggle
+    function toggleTheme() {
+      const body = document.body;
+      const checkbox = document.getElementById('themeToggle');
+      const label = document.querySelector('.toggle-label');
+      
+      if (checkbox.checked) {
+        body.classList.remove('light-mode');
+        body.classList.add('dark-mode');
+        label.textContent = 'Night Mode';
+      } else {
+        body.classList.remove('dark-mode');
+        body.classList.add('light-mode');
+        label.textContent = 'Light Mode';
+      }
+    }
+
+    // Tab Switching
+    function switchTab(tab) {
+      const fileForm = document.getElementById('uploadFromFile');
+      const urlForm = document.getElementById('uploadFromUrl');
+      const tabFile = document.getElementById('tabFile');
+      const tabUrl = document.getElementById('tabUrl');
+
+      if (tab === 'file') {
+        fileForm.classList.add('active');
+        urlForm.classList.remove('active');
+        tabFile.classList.add('active');
+        tabUrl.classList.remove('active');
+      } else {
+        fileForm.classList.remove('active');
+        urlForm.classList.add('active');
+        tabFile.classList.remove('active');
+        tabUrl.classList.add('active');
+      }
+    }
+
+    // Drag & Drop
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, preventDefaults, false);
+      document.body.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropzone.addEventListener(eventName, () => dropzone.classList.add('dragover'), false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, () => dropzone.classList.remove('dragover'), false);
+    });
+
+    dropzone.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      fileInput.files = files;
+      handleFileSelect(fileInput);
+    }
+
+    // Paste support
+    document.addEventListener('paste', (e) => {
+      const items = e.clipboardData.items;
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1 || items[i].type.indexOf('video') !== -1) {
+          const blob = items[i].getAsFile();
+          const file = new File([blob], `pasted-file-${Date.now()}.${blob.type.split('/')[1]}`, { type: blob.type });
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
+          fileInput.files = dataTransfer.files;
+          handleFileSelect(fileInput);
+          break;
+        }
+      }
+    });
+
+    // File Preview
+    function handleFileSelect(input) {
+      const preview = document.getElementById('preview');
+      const file = input.files[0];
+      
+      if (!file) return;
+
+      preview.classList.add('active');
+      preview.innerHTML = '';
+
+      if (file.type.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        preview.appendChild(img);
+      } else if (file.type.startsWith('video/')) {
+        const video = document.createElement('video');
+        video.src = URL.createObjectURL(file);
+        video.controls = true;
+        preview.appendChild(video);
+      } else {
+        preview.innerHTML = `<p style="padding: 20px; text-align: center;">📄 ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</p>`;
+      }
+    }
+  </script>
 </body>
 </html>
