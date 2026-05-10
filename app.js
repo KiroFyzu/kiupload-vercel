@@ -15,10 +15,10 @@ var indexRouter = require('./routes/index');
 
 var app = express();
 // // Untuk hosting di Vercel || temporary storage manager with vercel Fix: https://github.com/orgs/vercel/discussions/314
-// var uploadDir = path.join(__dirname, '../../tmp/');
+var uploadDir = path.join(__dirname, '../../tmp/');
 
 // Untuk hosting di localhost/dedicated server (VPS) 
-var uploadDir = path.join(__dirname, './tmp/');
+// var uploadDir = path.join(__dirname, './tmp/');
 var chunkDir = path.join(uploadDir, 'chunks');
 
 
