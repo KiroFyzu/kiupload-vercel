@@ -206,6 +206,14 @@
       animation: fadeInDown 0.8s ease;
     }
 
+    .header-actions {
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
     .header h1 {
       font-size: 2.8rem;
       font-weight: 800;
@@ -444,6 +452,28 @@
       transform: translateY(0);
     }
 
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+      background: rgba(255, 107, 53, 0.08);
+      color: inherit;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary-orange);
+      box-shadow: var(--shadow-orange);
+    }
+
     /* Preview */
     .preview {
       margin-top: 20px;
@@ -633,6 +663,9 @@
     <div class="header">
       <h1>Upload File</h1>
       <p class="text-muted">Layanan upload file modern dan Upload Status HD by Fyas.</p>
+      <div class="header-actions">
+        <a class="btn-secondary" href="/uploads-list">Lihat Hasil Upload</a>
+      </div>
     </div>
 
     <!-- Upload Section -->

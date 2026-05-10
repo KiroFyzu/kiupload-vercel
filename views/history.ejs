@@ -1,37 +1,689 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Uploaded Files</title>
+  <title>Riwayat Upload | Glassmorphism Orange</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary-orange: #ff6b35;
+      --primary-light: #ff9e5e;
+      --primary-dark: #e85d04;
+      --accent-orange: #ff8500;
+      --bg-dark: #0f0f0f;
+      --bg-light: #f5f0eb;
+      --glass-bg-dark: rgba(20, 20, 20, 0.6);
+      --glass-bg-light: rgba(255, 255, 255, 0.25);
+      --glass-border-dark: rgba(255, 107, 53, 0.2);
+      --glass-border-light: rgba(255, 107, 53, 0.15);
+      --text-dark: #f0f0f0;
+      --text-light: #1a1a1a;
+      --text-muted-dark: rgba(255, 255, 255, 0.6);
+      --text-muted-light: rgba(0, 0, 0, 0.5);
+      --shadow-orange: 0 8px 32px rgba(255, 107, 53, 0.2);
+      --shadow-dark: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --radius: 20px;
+      --radius-sm: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.5s ease, color 0.3s ease;
+      position: relative;
     }
-    .file-list {
-      margin-top: 20px;
+
+    /* Background Animation */
+    .bg-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
     }
-    .file-item {
-      margin-bottom: 10px;
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.6;
+      animation: float 20s infinite ease-in-out;
     }
-    .file-item a {
+
+    .orb-1 {
+      width: 400px;
+      height: 400px;
+      background: linear-gradient(135deg, #ff6b35, #ff9e5e);
+      top: -10%;
+      left: -10%;
+      animation-delay: 0s;
+    }
+
+    .orb-2 {
+      width: 300px;
+      height: 300px;
+      background: linear-gradient(135deg, #ff8500, #ffb347);
+      top: 40%;
+      right: -5%;
+      animation-delay: -5s;
+    }
+
+    .orb-3 {
+      width: 250px;
+      height: 250px;
+      background: linear-gradient(135deg, #e85d04, #ff6b35);
+      bottom: -5%;
+      left: 30%;
+      animation-delay: -10s;
+    }
+
+    .orb-4 {
+      width: 180px;
+      height: 180px;
+      background: linear-gradient(135deg, #ffb347, #ffcc80);
+      top: 20%;
+      left: 50%;
+      animation-delay: -15s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(30px, -30px) scale(1.1); }
+      50% { transform: translate(-20px, 20px) scale(0.95); }
+      75% { transform: translate(20px, 10px) scale(1.05); }
+    }
+
+    /* Dark Mode (Default) */
+    body.dark-mode {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    body.dark-mode .glass-panel {
+      background: var(--glass-bg-dark);
+      border: 1px solid var(--glass-border-dark);
+      box-shadow: var(--shadow-orange), var(--shadow-dark);
+    }
+
+    body.dark-mode .text-muted { color: var(--text-muted-dark); }
+    body.dark-mode .file-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 107, 53, 0.1);
+    }
+    body.dark-mode .file-card:hover {
+      background: rgba(255, 107, 53, 0.08);
+      border-color: rgba(255, 107, 53, 0.3);
+    }
+    body.dark-mode .file-name { color: var(--text-dark); }
+    body.dark-mode .file-meta { color: var(--text-muted-dark); }
+    body.dark-mode .empty-state { color: var(--text-muted-dark); }
+    body.dark-mode .back-btn {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-dark);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    body.dark-mode .back-btn:hover {
+      background: rgba(255, 107, 53, 0.2);
+      border-color: var(--primary-orange);
+    }
+    body.dark-mode .badge {
+      background: rgba(255, 107, 53, 0.15);
+      color: var(--primary-light);
+    }
+
+    /* Light Mode */
+    body.light-mode {
+      background: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    body.light-mode .glass-panel {
+      background: var(--glass-bg-light);
+      border: 1px solid var(--glass-border-light);
+      box-shadow: 0 8px 32px rgba(255, 107, 53, 0.15), 0 4px 16px rgba(0, 0, 0, 0.05);
+    }
+
+    body.light-mode .text-muted { color: var(--text-muted-light); }
+    body.light-mode .file-card {
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(255, 107, 53, 0.1);
+    }
+    body.light-mode .file-card:hover {
+      background: rgba(255, 107, 53, 0.05);
+      border-color: rgba(255, 107, 53, 0.25);
+    }
+    body.light-mode .file-name { color: var(--text-light); }
+    body.light-mode .file-meta { color: var(--text-muted-light); }
+    body.light-mode .empty-state { color: var(--text-muted-light); }
+    body.light-mode .back-btn {
+      background: rgba(0, 0, 0, 0.03);
+      color: var(--text-light);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    body.light-mode .back-btn:hover {
+      background: rgba(255, 107, 53, 0.1);
+      border-color: var(--primary-orange);
+    }
+    body.light-mode .badge {
+      background: rgba(255, 107, 53, 0.1);
+      color: var(--primary-dark);
+    }
+
+    /* Layout */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 40px;
+      animation: fadeInDown 0.8s ease;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .header-content h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--primary-orange), var(--primary-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-content p {
+      font-size: 1rem;
+      font-weight: 300;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
       text-decoration: none;
-      color: #3498db;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .back-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Glass Panel */
+    .glass-panel {
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: var(--radius);
+      padding: 30px;
+      margin-bottom: 30px;
+      transition: all 0.3s ease;
+    }
+
+    /* Stats Bar */
+    .stats-bar {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 107, 53, 0.1);
+      border: 1px solid rgba(255, 107, 53, 0.15);
+    }
+
+    .stat-icon {
+      font-size: 1.2rem;
+    }
+
+    .stat-text {
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    /* File List */
+    .file-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .file-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      border-radius: var(--radius-sm);
+      transition: all 0.3s ease;
+      text-decoration: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .file-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--primary-orange), var(--primary-light));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .file-card:hover::before {
+      opacity: 1;
+    }
+
+    .file-card:hover {
+      transform: translateX(5px);
+    }
+
+    .file-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(255, 158, 94, 0.2));
+      border: 1px solid rgba(255, 107, 53, 0.2);
+    }
+
+    .file-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .file-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-decoration: none;
+      color: inherit;
+      display: inline-block;
+      transition: color 0.3s ease;
+    }
+
+    .file-card:hover .file-name {
+      color: var(--primary-orange);
+    }
+
+    .file-meta {
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .file-actions {
+      display: flex;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .file-card:hover .file-actions {
+      opacity: 1;
+    }
+
+    .action-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: rgba(255, 107, 53, 0.1);
+      color: var(--primary-orange);
+    }
+
+    .action-btn:hover {
+      background: linear-gradient(135deg, var(--primary-orange), var(--primary-dark));
+      color: white;
+      transform: scale(1.1);
+    }
+
+    .action-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Badge */
+    .badge {
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      animation: fadeIn 0.8s ease;
+    }
+
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    .empty-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .empty-desc {
+      font-size: 0.9rem;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 32px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 107, 53, 0.2);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+      border-radius: 32px;
+      transition: 0.4s;
+      backdrop-filter: blur(10px);
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 24px;
+      width: 24px;
+      left: 4px;
+      bottom: 3px;
+      background: linear-gradient(135deg, var(--primary-orange), var(--primary-light));
+      border-radius: 50%;
+      transition: 0.4s;
+      box-shadow: 0 2px 8px rgba(255, 107, 53, 0.4);
+    }
+
+    input:checked + .toggle-slider {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(28px);
+      background: linear-gradient(135deg, #f0f0f0, #ffffff);
+    }
+
+    .toggle-label {
+      position: absolute;
+      right: 70px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.85rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .file-card {
+      animation: slideIn 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(var(--primary-orange), var(--primary-dark));
+      border-radius: 4px;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .header { flex-direction: column; text-align: center; }
+      .header h1 { font-size: 1.8rem; }
+      .glass-panel { padding: 20px; }
+      .file-actions { opacity: 1; }
+      .theme-toggle { top: 10px; right: 10px; }
+      .toggle-label { display: none; }
+      .stats-bar { justify-content: center; }
     }
   </style>
 </head>
-<body>
-  <h1>Uploaded Files</h1>
-  <div class="file-list">
-    <% if (files.length > 0) { %>
-      <% files.forEach(file => { %>
-        <div class="file-item">
-          <a href="<%= file.url %>" target="_blank"><%= file.name %></a>
-        </div>
-      <% }) %>
-    <% } else { %>
-      <p>No files uploaded yet.</p>
-    <% } %>
+<body class="dark-mode">
+  <!-- Background Animation -->
+  <div class="bg-container">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
   </div>
+
+  <!-- Theme Toggle -->
+  <div class="theme-toggle">
+    <span class="toggle-label text-muted">Night Mode</span>
+    <label class="toggle-switch">
+      <input type="checkbox" id="themeToggle" checked onchange="toggleTheme()">
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-content">
+        <h1>Riwayat Upload</h1>
+        <p class="text-muted">Daftar file yang telah diupload</p>
+      </div>
+      <a href="/" class="back-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Kembali
+      </a>
+    </div>
+
+    <!-- Main Panel -->
+    <div class="glass-panel">
+      <% if (files && files.length > 0) { %>
+        <!-- Stats -->
+        <div class="stats-bar">
+          <div class="stat-item">
+            <span class="stat-icon">📁</span>
+            <span class="stat-text"><%= files.length %> File</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-icon">✅</span>
+            <span class="stat-text">Tersedia</span>
+          </div>
+        </div>
+
+        <!-- File List -->
+        <div class="file-list">
+          <% files.forEach((file, index) => { 
+            const ext = file.name.split('.').pop().toLowerCase();
+            let icon = '📄';
+            let type = 'file';
+            if (['jpg','jpeg','png','gif','webp','svg','bmp'].includes(ext)) { icon = '🖼️'; type = 'image'; }
+            else if (['mp4','webm','mov','avi','mkv'].includes(ext)) { icon = '🎬'; type = 'video'; }
+            else if (['mp3','wav','ogg','flac','aac'].includes(ext)) { icon = '🎵'; type = 'audio'; }
+            else if (['pdf'].includes(ext)) { icon = '📑'; type = 'pdf'; }
+            else if (['zip','rar','7z','tar','gz'].includes(ext)) { icon = '📦'; type = 'archive'; }
+            else if (['js','ts','html','css','json','xml','py','java','cpp','c','php','rb','go','rs'].includes(ext)) { icon = '💻'; type = 'code'; }
+          %>
+          <div class="file-card" data-delay="<%= (index * 0.1) %>">
+            <div class="file-icon"><%= icon %></div>
+            <div class="file-info">
+              <a class="file-name" href="<%= file.url %>" target="_blank" rel="noopener"><%= file.name %></a>
+              <div class="file-meta">
+                <span class="badge"><%= type %></span>
+                <span>•</span>
+                <span><%= ext.toUpperCase() %></span>
+              </div>
+            </div>
+            <div class="file-actions">
+              <a href="<%= file.url %>" target="_blank" class="action-btn" title="Buka">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+              <button class="action-btn" onclick="copyUrl('<%= file.url %>')" title="Copy URL">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <!-- Empty State -->
+        <div class="empty-state">
+          <div class="empty-icon">📂</div>
+          <div class="empty-title">Belum Ada File</div>
+          <p class="empty-desc text-muted">Anda belum mengupload file apapun. Kembali ke halaman utama untuk mulai mengupload.</p>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <script>
+    // Theme Toggle
+    function toggleTheme() {
+      const body = document.body;
+      const checkbox = document.getElementById('themeToggle');
+      const label = document.querySelector('.toggle-label');
+      
+      if (checkbox.checked) {
+        body.classList.remove('light-mode');
+        body.classList.add('dark-mode');
+        label.textContent = 'Night Mode';
+      } else {
+        body.classList.remove('dark-mode');
+        body.classList.add('light-mode');
+        label.textContent = 'Light Mode';
+      }
+    }
+
+    // Copy URL to clipboard
+    async function copyUrl(url) {
+      try {
+        await navigator.clipboard.writeText(url);
+        // Visual feedback could be added here
+        const btn = event.currentTarget;
+        const original = btn.innerHTML;
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>';
+        btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+        setTimeout(() => {
+          btn.innerHTML = original;
+          btn.style.background = '';
+        }, 1500);
+      } catch (err) {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = url;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+    }
+
+    document.querySelectorAll('.file-card').forEach((card) => {
+      const delay = card.dataset.delay;
+      if (delay) {
+        card.style.animationDelay = `${delay}s`;
+      }
+    });
+  </script>
 </body>
 </html>
