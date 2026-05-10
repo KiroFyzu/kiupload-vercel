@@ -452,6 +452,12 @@
       transform: translateY(0);
     }
 
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
     .btn-secondary {
       display: inline-flex;
       align-items: center;
@@ -472,6 +478,47 @@
       transform: translateY(-2px);
       border-color: var(--primary-orange);
       box-shadow: var(--shadow-orange);
+    }
+
+    .upload-progress {
+      display: none;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .upload-progress.active {
+      display: grid;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 107, 53, 0.15);
+      overflow: hidden;
+      border: 1px solid rgba(255, 107, 53, 0.2);
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(135deg, var(--primary-orange), var(--primary-dark));
+      transition: width 0.2s ease;
+    }
+
+    .upload-progress.error .progress-bar {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+
+    .progress-text {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted-dark);
+    }
+
+    body.light-mode .progress-text {
+      color: var(--text-muted-light);
     }
 
     /* Preview */
@@ -703,6 +750,13 @@
           <span>🚀 Upload File</span>
         </button>
 
+        <div id="uploadProgress" class="upload-progress" role="status" aria-live="polite">
+          <div class="progress-track">
+            <div id="uploadProgressBar" class="progress-bar"></div>
+          </div>
+          <div id="uploadProgressText" class="progress-text">0%</div>
+        </div>
+
         <div id="preview" class="preview"></div>
       </form>
 
@@ -830,6 +884,12 @@
     // Drag & Drop
     const dropzone = document.getElementById('dropzone');
     const fileInput = document.getElementById('fileInput');
+    const uploadForm = document.getElementById('uploadFromFile');
+    const uploadButton = uploadForm.querySelector('.btn-primary');
+    const progressWrap = document.getElementById('uploadProgress');
+    const progressBar = document.getElementById('uploadProgressBar');
+    const progressText = document.getElementById('uploadProgressText');
+    const CHUNK_SIZE = 5 * 1024 * 1024;
 
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
       dropzone.addEventListener(eventName, preventDefaults, false);
@@ -858,6 +918,18 @@
       handleFileSelect(fileInput);
     }
 
+    function setProgress(percent, message) {
+      progressWrap.classList.add('active');
+      progressBar.style.width = `${percent}%`;
+      progressText.textContent = message || `${percent}%`;
+    }
+
+    function resetProgress() {
+      progressWrap.classList.remove('active', 'error');
+      progressBar.style.width = '0%';
+      progressText.textContent = '0%';
+    }
+
     // Paste support
     document.addEventListener('paste', (e) => {
       const items = e.clipboardData.items;
@@ -881,6 +953,8 @@
       
       if (!file) return;
 
+      resetProgress();
+
       preview.classList.add('active');
       preview.innerHTML = '';
 
@@ -897,6 +971,122 @@
         preview.innerHTML = `<p style="padding: 20px; text-align: center;">📄 ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</p>`;
       }
     }
+
+    function getUploadKey(file) {
+      return `${file.name}-${file.size}-${file.lastModified}`;
+    }
+
+    async function initUploadSession(file, totalChunks) {
+      const response = await fetch('/upload-init', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fileName: file.name,
+          fileSize: file.size,
+          totalChunks
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Init upload failed');
+      }
+
+      const data = await response.json();
+      return data.uploadId;
+    }
+
+    async function getUploadedChunks(uploadId) {
+      const response = await fetch(`/upload-status?uploadId=${encodeURIComponent(uploadId)}`);
+      if (!response.ok) {
+        return [];
+      }
+      const data = await response.json();
+      return Array.isArray(data.uploaded) ? data.uploaded : [];
+    }
+
+    async function uploadChunk(file, uploadId, chunkIndex, totalChunks) {
+      const start = chunkIndex * CHUNK_SIZE;
+      const end = Math.min(file.size, start + CHUNK_SIZE);
+      const chunk = file.slice(start, end);
+      const formData = new FormData();
+      formData.append('chunk', chunk, file.name);
+
+      const response = await fetch(
+        `/upload-chunk?uploadId=${encodeURIComponent(uploadId)}&chunkIndex=${chunkIndex}&totalChunks=${totalChunks}`,
+        { method: 'POST', body: formData }
+      );
+
+      if (!response.ok) {
+        throw new Error('Chunk upload failed');
+      }
+    }
+
+    async function finalizeUpload(uploadId, totalChunks, fileName) {
+      const response = await fetch('/upload-complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uploadId, totalChunks, fileName })
+      });
+
+      if (!response.ok) {
+        throw new Error('Complete upload failed');
+      }
+
+      return response.json();
+    }
+
+    uploadForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      if (!fileInput.files.length) {
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+      const uploadKey = getUploadKey(file);
+
+      try {
+        progressWrap.classList.remove('error');
+        uploadButton.disabled = true;
+        setProgress(0, 'Menyiapkan upload...');
+
+        let uploadId = localStorage.getItem(`uploadId:${uploadKey}`);
+        if (!uploadId) {
+          uploadId = await initUploadSession(file, totalChunks);
+          localStorage.setItem(`uploadId:${uploadKey}`, uploadId);
+        }
+
+        const uploadedChunks = await getUploadedChunks(uploadId);
+        const uploadedSet = new Set(uploadedChunks);
+        let uploadedCount = uploadedSet.size;
+
+        if (uploadedCount > 0) {
+          const resumePercent = Math.round((uploadedCount / totalChunks) * 100);
+          setProgress(resumePercent, `Melanjutkan ${resumePercent}%`);
+        }
+
+        for (let index = 0; index < totalChunks; index += 1) {
+          if (uploadedSet.has(index)) {
+            continue;
+          }
+
+          await uploadChunk(file, uploadId, index, totalChunks);
+          uploadedCount += 1;
+          const percent = Math.round((uploadedCount / totalChunks) * 100);
+          setProgress(percent, `Mengunggah ${percent}%`);
+        }
+
+        await finalizeUpload(uploadId, totalChunks, file.name);
+        setProgress(100, 'Upload selesai');
+        localStorage.removeItem(`uploadId:${uploadKey}`);
+      } catch (error) {
+        progressWrap.classList.add('error');
+        progressText.textContent = 'Upload gagal';
+      } finally {
+        uploadButton.disabled = false;
+      }
+    });
   </script>
 </body>
 </html>
