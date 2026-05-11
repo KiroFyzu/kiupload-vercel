@@ -521,6 +521,31 @@
       color: var(--text-muted-light);
     }
 
+    .upload-result {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 107, 53, 0.2);
+      background: rgba(255, 107, 53, 0.08);
+      font-size: 0.9rem;
+      word-break: break-all;
+    }
+
+    .upload-result.active {
+      display: block;
+    }
+
+    .upload-result a {
+      color: var(--primary-orange);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .upload-result a:hover {
+      text-decoration: underline;
+    }
+
     /* Preview */
     .preview {
       margin-top: 20px;
@@ -757,6 +782,8 @@
           <div id="uploadProgressText" class="progress-text">0%</div>
         </div>
 
+        <div id="uploadResult" class="upload-result" role="status" aria-live="polite"></div>
+
         <div id="preview" class="preview"></div>
       </form>
 
@@ -889,6 +916,7 @@
     const progressWrap = document.getElementById('uploadProgress');
     const progressBar = document.getElementById('uploadProgressBar');
     const progressText = document.getElementById('uploadProgressText');
+    const uploadResult = document.getElementById('uploadResult');
     const CHUNK_SIZE = 5 * 1024 * 1024;
 
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -928,6 +956,8 @@
       progressWrap.classList.remove('active', 'error');
       progressBar.style.width = '0%';
       progressText.textContent = '0%';
+      uploadResult.classList.remove('active');
+      uploadResult.textContent = '';
     }
 
     // Paste support
@@ -1077,9 +1107,13 @@
           setProgress(percent, `Mengunggah ${percent}%`);
         }
 
-        await finalizeUpload(uploadId, totalChunks, file.name);
+        const result = await finalizeUpload(uploadId, totalChunks, file.name);
         setProgress(100, 'Upload selesai');
         localStorage.removeItem(`uploadId:${uploadKey}`);
+        if (result && result.fileUrl) {
+          uploadResult.innerHTML = `Link hasil upload: <a href="${result.fileUrl}" target="_blank" rel="noopener">${result.fileUrl}</a>`;
+          uploadResult.classList.add('active');
+        }
       } catch (error) {
         progressWrap.classList.add('error');
         progressText.textContent = 'Upload gagal';
